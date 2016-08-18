@@ -1,0 +1,17 @@
+doctype html
+html(lang="en")
+  head
+    title
+  body
+    h2= message
+
+    table
+      thead
+        tr
+          th Name
+          th Lastname
+      tbody
+        each obj in data
+          tr
+            td= obj.name
+            td= obj.lastname
