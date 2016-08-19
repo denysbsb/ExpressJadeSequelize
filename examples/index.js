@@ -2,12 +2,20 @@ var express = require('express');
 var app = express();
 var Sequelize = require('sequelize');
 var bodyParser = require('body-parser');
+var methodOverride = require('method-override');
 
 app.set('views','./views');
 app.set('view engine', 'pug');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(methodOverride(function(req, res){
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    var method = req.body._method
+    delete req.body._method
+    return method
+  }
+}));
 
 var db = 'psycap';
 var user = 'denys';
@@ -61,7 +69,21 @@ app.get('/users/:id', function(req, res){
 		res.render('users',{
 			message: 'Usuario',
 			data: result
-		})
+		});
+	})
+	.catch(function(err){
+		console.log('Error');
+	});
+});
+
+app.delete('/users/:id', function(req, res){
+	User
+	  .destroy({ where: { id: req.params.id } })
+	.then(function(result){
+		res.render('users',{
+			message: 'Usuario',
+			data: result
+		});
 	})
 	.catch(function(err){
 		console.log('Error');
