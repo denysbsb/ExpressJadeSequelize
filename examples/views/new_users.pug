@@ -1,0 +1,10 @@
+doctype html
+html(lang="en")
+  head
+    title
+  body
+    h2= message
+    form(method="post", action="/user/create")
+      input(type="text", name="name")
+      input(type="password", name="lastname")
+      input(type="submit", value="submit")

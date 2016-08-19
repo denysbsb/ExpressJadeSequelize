@@ -1,11 +1,19 @@
 var express = require('express');
 var app = express();
 var Sequelize = require('sequelize');
+var bodyParser = require('body-parser');
 
 app.set('views','./views');
 app.set('view engine', 'pug');
 
-var sequelize = new Sequelize('psycap', 'denys', 'a1920212223', {
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+var db = 'psycap';
+var user = 'denys';
+var pass = 'a1920212223';
+
+var sequelize = new Sequelize(db, user, pass, {
   host: 'localhost',
   dialect: 'mysql',
   port: '8889'
@@ -23,12 +31,12 @@ var User = sequelize.define('user', {
   }
 });
 
-User.sync({}).then(function () {
+User.sync({force:true}).then(function () {
   // Table created
   return User.create({
-    name: 'John',
+    name: 'Denys',
     estado:'goias',
-    lastname: 'Hancock'
+    lastname: 'Fontenele'
   });
 });
 
@@ -38,11 +46,12 @@ app.get('/users', function(req, res){
 		res.render('users',{
 			message: 'Mensagem usuario',
 			data: result
-		})
+		});
+	})
 	.catch(function(err){
 		console.log('Error');
 	});
-	})
+
 });
 
 app.get('/users/:id', function(req, res){
@@ -57,6 +66,30 @@ app.get('/users/:id', function(req, res){
 	.catch(function(err){
 		console.log('Error');
 	});
+});
+
+app.get('/user/create', function(req, res){
+	res.render('new_users', {
+		message: 'Hello there!',
+		count: 9
+	});
+});
+
+app.post('/user/create',function(req, res){
+	User.create({
+	    name: req.body.name,
+	    estado:'goias',
+	    lastname: req.body.lastname
+  	}).then(function(result){
+  		User.findAll().then(function(result){
+  			res.render('users',{
+				message: 'Lista Usuarios',
+				data: result
+			});
+  		})
+  	}).catch(function(err){
+
+  	});
 });
 
 app.get('/', function(req, res){
